@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuditStore } from './auditStore';
 import type { AuditEventType } from './AuditTypes';
+import { IconFilter } from '@tabler/icons-react';
 
 const TYPES: AuditEventType[] = ['CREATED','EDITED','SENT','VIEWED','APPROVED','SIGNED','COMMENTED','RESTORED','PERMISSION_CHANGED','FAILED'];
 
@@ -26,9 +27,29 @@ const AuditControls: React.FC<{ onClear?: () => void; actors?: string[] }> = () 
       <div className="relative">
         <button
           onClick={() => setShowSortMenu(!showSortMenu)}
-          className="px-3 py-2 rounded-md text-sm bg-white hover:bg-gray-50 focus:outline-none whitespace-nowrap"
+          className="px-3 py-2 rounded-md text-sm bg-white hover:bg-gray-50 focus:outline-none whitespace-nowrap inline-flex items-center gap-2"
         >
-          Filter by
+          <IconFilter className="w-4 h-4" style={{ color: '#3F3F46' }} />
+          <span
+            style={{
+              fontFamily: 'Inter, sans-serif',
+              fontWeight: 500,
+              fontSize: '12px',
+              lineHeight: '16px',
+              letterSpacing: '0%',
+              color: '#3F3F46',
+            }}
+          >
+            Filter
+          </span>
+          {filters.types.length > 0 && (
+            <span
+              className="ml-1 inline-flex items-center justify-center w-5 h-5 rounded-full text-[11px] font-medium"
+              style={{ backgroundColor: '#3F3F46', color: '#C2C2C3' }}
+            >
+              {filters.types.length}
+            </span>
+          )}
         </button>
         {showSortMenu && (
           <>
@@ -93,3 +114,4 @@ const AuditControls: React.FC<{ onClear?: () => void; actors?: string[] }> = () 
 };
 
 export default AuditControls;
+

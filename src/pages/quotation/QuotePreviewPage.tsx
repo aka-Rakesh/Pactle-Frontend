@@ -8,7 +8,9 @@ import {
   IconZoomIn,
   IconZoomOut,
   IconMaximize,
-  IconHistory,
+  IconClockRecord,
+  IconMessageCircle,
+  IconVersions,
 } from "@tabler/icons-react";
 import type { Quotation, QuotationStatus } from "../../types/common";
 import { useQuotationDetails, useApproveQuotation } from "../../hooks";
@@ -2170,7 +2172,7 @@ const QuotePreviewPage: React.FC = () => {
               className="p-2 sm:p-3"
               style={showAudit ? { backgroundColor: '#2e4828', color: 'white' } : {}}
             >
-              <IconHistory className="w-3 h-3 sm:w-4 sm:h-4" />
+              <IconClockRecord className="w-3 h-3 sm:w-4 sm:h-4" />
             </Button>
           </div>
         </div>
@@ -2191,7 +2193,7 @@ const QuotePreviewPage: React.FC = () => {
 
     </div>
 
-    {/* Audit Trail Slide-out Panel - Positioned beside button, below control bar */}
+    {/* Audit Trail Slide-out Panel */}
     <div
       className={`absolute top-0 right-0 h-full w-[320px] bg-white shadow-2xl transform transition-transform duration-300 ease-in-out z-40 ${
         showAudit ? 'translate-x-0' : 'translate-x-full'
