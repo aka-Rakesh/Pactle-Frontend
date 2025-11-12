@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { IconMessage2 } from '@tabler/icons-react';
 import { Outlet, useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Header from './Header';
@@ -10,6 +11,16 @@ const DashboardLayout: React.FC = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { features } = useClientConfig();
+  const openChat = () => {
+    const w: any = typeof window !== 'undefined' ? (window as any) : null;
+    if (w?.$crisp) {
+      w.$crisp.push(["do", "chat:open"]);
+      return;
+    }
+    if (w?.Intercom) {
+      w.Intercom("show");
+    }
+  };
 
   const getActiveTab = () => {
     const pathSegments = location.pathname.split('/');
@@ -75,6 +86,16 @@ const DashboardLayout: React.FC = () => {
           <Outlet />
         </main>
       </div>
+
+      {features.showHelpSupport && (
+        <button
+          onClick={openChat}
+          className="fixed bottom-6 right-6 z-50 w-12 h-12 rounded-full bg-green-darkest text-white shadow-lg flex items-center justify-center hover:bg-green-dark"
+          aria-label="Open chat"
+        >
+          <IconMessage2 className="w-6 h-6" />
+        </button>
+      )}
     </div>
   );
 };

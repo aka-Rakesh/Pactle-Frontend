@@ -49,6 +49,7 @@ export interface ClientConfig {
     showAdminPanel: boolean;
     showUserManagement: boolean;
     showSettings: boolean;
+    showHelpSupport: boolean;
   };
 
   // Brand-specific assets and styling
@@ -112,6 +113,7 @@ const DEFAULT_CONFIG: ClientConfig = {
       members: ["super_admin", "admin"],
       sku_list: ["super_admin", "admin", "salesperson"],
       raw_material_sheet: ["super_admin", "admin", "rm_manager"],
+      help_support: ["authenticated"],
     },
     actions: {
       "quotations.create": ["super_admin", "admin", "salesperson"],
@@ -149,6 +151,7 @@ const DEFAULT_CONFIG: ClientConfig = {
     showAdminPanel: true,
     showUserManagement: true,
     showSettings: true,
+    showHelpSupport: true,
   },
 
   branding: {
@@ -204,6 +207,7 @@ const CLIENT_CONFIGS: Record<string, Partial<ClientConfig>> = {
         profile: ["authenticated"],
         members: ["super_admin"],
         sku_list: ["super_admin", "salesperson"],
+        help_support: ["authenticated"],
       },
       actions: {
         "quotations.create": ["super_admin", "salesperson"],
@@ -238,6 +242,7 @@ const CLIENT_CONFIGS: Record<string, Partial<ClientConfig>> = {
       showAdminPanel: true,
       showUserManagement: true,
       showSettings: true,
+      showHelpSupport: true,
     },
 
     branding: {
@@ -292,6 +297,7 @@ const CLIENT_CONFIGS: Record<string, Partial<ClientConfig>> = {
         profile: ["authenticated"],
         members: ["super_admin"],
         sku_list: ["super_admin", "salesperson"],
+        help_support: ["authenticated"],
       },
       actions: {
         "quotations.create": ["super_admin", "salesperson"],
@@ -326,6 +332,7 @@ const CLIENT_CONFIGS: Record<string, Partial<ClientConfig>> = {
       showAdminPanel: true,
       showUserManagement: true,
       showSettings: true,
+      showHelpSupport: true,
     },
 
     branding: {
@@ -382,6 +389,7 @@ const CLIENT_CONFIGS: Record<string, Partial<ClientConfig>> = {
         members: ["super_admin", "admin"],
         sku_list: ["super_admin", "admin", "salesperson"],
         raw_material_sheet: ["super_admin", "admin", "rm_manager"],
+        help_support: ["authenticated"],
       },
       actions: {
         "quotations.create": ["super_admin", "admin", "salesperson"],
@@ -419,6 +427,7 @@ const CLIENT_CONFIGS: Record<string, Partial<ClientConfig>> = {
       showAdminPanel: true,
       showUserManagement: true,
       showSettings: true,
+      showHelpSupport: true,
     },
 
     branding: {

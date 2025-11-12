@@ -129,6 +129,8 @@ const Sidebar: React.FC<SidebarProps> = ({
                     return features.showSkuList && canAccessPage('sku_list');
                   case 'members':
                     return features.showMembers && canAccessPage('members');
+                  case 'help':
+                    return features.showHelpSupport && canAccessPage('help_support');
                   default:
                     return false;
                 }

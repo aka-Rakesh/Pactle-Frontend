@@ -2,6 +2,7 @@ import {
   IconCube,
   IconReceipt,
   IconListDetails,
+  IconLifebuoy,
 } from "@tabler/icons-react";
 import type { SidebarMenuItem } from "../types/common";
 
@@ -23,5 +24,11 @@ export const sidebarMenuItems: SidebarMenuItem[] = [
     label: "SKU List",
     icon: IconListDetails,
     path: "/dashboard/sku-list",
+  },
+  {
+    id: "help",
+    label: "Help & Support",
+    icon: IconLifebuoy,
+    path: "/dashboard/help",
   },
 ];
