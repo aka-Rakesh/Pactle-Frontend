@@ -9,7 +9,7 @@ import {
   IconZoomOut,
   IconMaximize,
   IconClockRecord,
-  IconMessageCircle,
+  IconBrandWechat,
   IconVersions,
 } from "@tabler/icons-react";
 import type { Quotation, QuotationStatus } from "../../types/common";
@@ -2065,7 +2065,7 @@ const QuotePreviewPage: React.FC = () => {
     <div className="bg-background-dark h-full flex flex-col relative">
       {/* Control Bar */}
       <div className={`bg-background-light border-t border-border-dark px-4 sm:px-6 lg:px-8 py-2 flex-shrink-0 relative z-10 transition-all duration-300 ${
-        showAudit ? 'mr-[320px]' : ''
+        showAudit ? 'mr-[368px]' : 'mr-[48px]'
       }`}>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="flex items-center gap-2">
@@ -2165,15 +2165,7 @@ const QuotePreviewPage: React.FC = () => {
             >
               <IconMaximize className="w-3 h-3 sm:w-4 sm:h-4" />
             </Button>
-            <Button
-              variant="close"
-              onClick={() => setShowAudit((v) => !v)}
-              title="Toggle Audit Trail"
-              className="p-2 sm:p-3"
-              style={showAudit ? { backgroundColor: '#2e4828', color: 'white' } : {}}
-            >
-              <IconClockRecord className="w-3 h-3 sm:w-4 sm:h-4" />
-            </Button>
+            {/* Audit Trail toggle removed from horizontal navbar as requested */}
           </div>
         </div>
       </div>
@@ -2182,7 +2174,7 @@ const QuotePreviewPage: React.FC = () => {
     <div className="flex-1 flex relative overflow-hidden">
       {/* PDF Document Container */}
       <div className={`flex-1 transition-all duration-300 overflow-hidden ${
-        showAudit ? 'mr-[320px]' : ''
+        showAudit ? 'mr-[368px]' : 'mr-[48px]'
       }`}>
         <div className="h-full overflow-auto sm:px-6 lg:px-8 pb-2 sm:pb-4 p-2 sm:p-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           <div style={{ minHeight: '100%', overflow: 'visible' }}>
@@ -2193,13 +2185,51 @@ const QuotePreviewPage: React.FC = () => {
 
     </div>
 
-    {/* Audit Trail Slide-out Panel */}
+    {/* Vertical Navbar + Audit Trail Slide-out Panel */}
     <div
-      className={`absolute top-0 right-0 h-full w-[320px] bg-white shadow-2xl transform transition-transform duration-300 ease-in-out z-40 ${
-        showAudit ? 'translate-x-0' : 'translate-x-full'
-      }`}
+      className="absolute top-0 right-0 h-full z-40 w-[368px]"
+      aria-label="Audit utilities drawer"
     >
-      <AuditPanel documentId={rfqId} onClose={() => setShowAudit(false)} />
+      {/* Vertical Navbar */}
+      <div
+        className="absolute top-0 h-full w-12 border-l border-t border-gray-200 flex flex-col items-center justify-start gap-2 pt-3 transition-all duration-300 ease-in-out"
+        style={{ backgroundColor: '#f4f2ed', right: showAudit ? 320 : 0 }}
+      >
+        <button
+          type="button"
+          className="w-8 h-8 rounded-md bg-[#f4f2ed] hover:bg-[#f4f2ed] text-[10px] font-medium flex items-center justify-center text-[#767579] hover:text-[#2e4928]"
+          title="Comments"
+        >
+          <IconBrandWechat className="w-4 h-4" />
+        </button>
+        <button
+          type="button"
+          onClick={() => setShowAudit((v) => !v)}
+          className={`w-8 h-8 rounded-md text-[10px] font-medium flex items-center justify-center ${
+            showAudit
+              ? 'bg-[#2e4928] text-white hover:bg-[#f4f2ed] hover:text-[#2e4928]'
+              : 'bg-[#f4f2ed] hover:bg-[#f4f2ed] text-[#767579] hover:text-[#2e4928]'
+          }`}
+          title="Audit Trail"
+        >
+          <IconClockRecord className="w-4 h-4" />
+        </button>
+        <button
+          type="button"
+          className="w-8 h-8 rounded-md bg-[#f4f2ed] hover:bg-[#f4f2ed] text-[10px] font-medium flex items-center justify-center text-[#767579] hover:text-[#2e4928]"
+          title="Version Control"
+        >
+          <IconVersions className="w-4 h-4" />
+        </button>
+      </div>
+      {/* Audit Panel */}
+      <div
+        className={`absolute top-0 right-0 h-full w-[320px] bg-white shadow-2xl border-l border-t border-gray-200 transform transition-transform duration-300 ease-in-out ${
+          showAudit ? 'translate-x-0' : 'translate-x-full'
+        }`}
+      >
+        <AuditPanel documentId={rfqId} onClose={() => setShowAudit(false)} />
+      </div>
     </div>
     </div>
   );
