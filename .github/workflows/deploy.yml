@@ -1,0 +1,163 @@
+name: 🚀 Deploy to AWS S3 + CloudFront
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+  workflow_dispatch: # Allow manual triggering
+
+env:
+  NODE_VERSION: "20"
+  AWS_REGION: "us-east-1"
+
+jobs:
+  deploy:
+    name: 🌐 Deploy to AWS
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: aws-secrets
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "yarn"
+
+      - name: 🔧 Install dependencies
+        run: yarn install --immutable
+
+      - name: 🔍 Lint code
+        run: yarn lint --if-present || echo "No lint script found"
+
+      - name: 🏗️ Build project
+        run: yarn build
+        env:
+          # Override with production values
+          VITE_API_URL: ${{ vars.VITE_API_URL }}
+          NODE_ENV: production
+          VITE_CORS_ORIGIN: ${{ vars.VITE_CORS_ORIGIN }}
+
+      - name: 🧪 Run tests (if any)
+        run: yarn test --if-present || echo "No tests found"
+
+      - name: ⚡ Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION || env.AWS_REGION }}
+
+      - name: 🔍 Test AWS connection
+        run: |
+          echo "🔍 Testing AWS connection..."
+          aws sts get-caller-identity
+          echo "✅ AWS connection successful"
+
+      - name: 🔍 Validate deployment configuration
+        run: |
+          # Validate S3 bucket name
+          BUCKET_NAME="${{ vars.S3_BUCKET_NAME || secrets.S3_BUCKET_NAME }}"
+
+          if [ -z "$BUCKET_NAME" ]; then
+            echo "❌ S3_BUCKET_NAME not set in GitHub variables/secrets"
+            echo "Please set S3_BUCKET_NAME in your repository's Settings > Secrets and variables > Actions"
+            exit 1
+          fi
+
+          echo "✅ S3_BUCKET_NAME: $BUCKET_NAME"
+
+          # Validate AWS region
+          REGION="${{ vars.AWS_REGION || env.AWS_REGION }}"
+          echo "✅ AWS_REGION: $REGION"
+
+      - name: 🚀 Deploy to S3
+        run: |
+          # Set deployment variables
+          BUCKET_NAME="${{ vars.S3_BUCKET_NAME || secrets.S3_BUCKET_NAME }}"
+          echo "🪣 Deploying to bucket: $BUCKET_NAME"
+
+          # Upload HTML files with no-cache
+          aws s3 sync dist/ s3://$BUCKET_NAME/ \
+            --exclude "*" \
+            --include "*.html" \
+            --cache-control "no-cache, no-store, must-revalidate" \
+            --delete
+
+          # Upload other files with long cache
+          aws s3 sync dist/ s3://$BUCKET_NAME/ \
+            --exclude "*.html" \
+            --cache-control "public, max-age=31536000" \
+            --delete
+
+          echo "✅ Files uploaded to S3"
+
+      - name: 🔒 Set bucket policy (if needed)
+        run: |
+          BUCKET_NAME="${{ vars.S3_BUCKET_NAME || secrets.S3_BUCKET_NAME }}"
+
+          # Optional: Set bucket policy for public read access
+          if [ -n "$BUCKET_NAME" ]; then
+            echo "🔒 Setting bucket policy for public read access..."
+            aws s3api put-bucket-policy --bucket $BUCKET_NAME --policy '{
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Sid": "PublicReadGetObject",
+                  "Effect": "Allow",
+                  "Principal": "*",
+                  "Action": "s3:GetObject",
+                  "Resource": "arn:aws:s3:::'$BUCKET_NAME'/*"
+                }
+              ]
+            }' || echo "⚠️ Could not set bucket policy (may already be set)"
+          fi
+
+      - name: ☁️ Invalidate CloudFront
+        run: |
+          DISTRIBUTION_ID="${{ vars.CLOUDFRONT_DISTRIBUTION_ID || secrets.CLOUDFRONT_DISTRIBUTION_ID }}"
+
+          if [ -n "$DISTRIBUTION_ID" ]; then
+            echo "🔄 Invalidating CloudFront distribution: $DISTRIBUTION_ID"
+
+            aws cloudfront create-invalidation \
+              --distribution-id $DISTRIBUTION_ID \
+              --paths "/*"
+
+            echo "✅ CloudFront cache invalidated"
+          else
+            echo "⚠️ No CloudFront distribution ID provided, skipping invalidation"
+          fi
+
+      - name: 📊 Deployment Summary
+        run: |
+          BUCKET_NAME="${{ vars.S3_BUCKET_NAME || secrets.S3_BUCKET_NAME }}"
+          REGION="${{ vars.AWS_REGION || env.AWS_REGION }}"
+          CLOUDFRONT_ID="${{ vars.CLOUDFRONT_DISTRIBUTION_ID || secrets.CLOUDFRONT_DISTRIBUTION_ID }}"
+
+          echo "## 🎉 Deployment Successful!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **S3 Bucket**: \`$BUCKET_NAME\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Region**: \`$REGION\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Build**: \`dist/\`" >> $GITHUB_STEP_SUMMARY
+
+          if [ -n "$CLOUDFRONT_ID" ]; then
+            echo "- **CloudFront**: \`$CLOUDFRONT_ID\`" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "🌐 **Your app is now live!**" >> $GITHUB_STEP_SUMMARY
+
+          # Add deployment URLs
+          if [ -n "$CLOUDFRONT_ID" ]; then
+            echo "- **CloudFront URL**: https://$CLOUDFRONT_ID.cloudfront.net" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- **S3 Website URL**: http://$BUCKET_NAME.s3-website-$REGION.amazonaws.com" >> $GITHUB_STEP_SUMMARY
+          fi

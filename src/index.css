@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Satoshi";
+  src: url("/fonts/Satoshi-Variable.ttf") format("truetype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "ClashGrotesk";
+  src: url("/fonts/ClashGrotesk-Variable.ttf") format("truetype");
+  font-display: swap;
+}
+
+@theme {
+  --color-background-lightest: #FAF9F6;
+  --color-background-light: #F4F2ED;
+  --color-background-dark: #ECE8DF;
+  --color-background-darkest: #E4DED3;
+
+  --color-border-dark: #E4DED3;
+
+  --color-gray-light: #767579;
+  --color-gray-dark: #3F3F46;
+  
+  --color-black-custom: #060606;
+
+  --color-artichoke: #958F7E;
+  
+  --color-green-lightest: #D6FFD8;
+  --color-green-light: #118E4F;
+  --color-green-default: #4E8B4A;
+  --color-green-dark: #2D4C36;
+  --color-green-darkest: #2F4828;
+  --color-green-icon: #1E2E1A;
+
+  --color-yellow-light: #FEF9C2;
+  --color-yellow-lightest: #FAF1DB;
+  --color-yellow-default: #CAC034;
+  --color-yellow-dark: #966302;
+  --color-yellow-darkest: #655F0B;
+  
+  --color-pink-lightest: #FAE0E0;
+  --color-pink-default: #FEC2C2;
+  --color-pink-dark: #7B5353;
+  --color-pink-darkest: #482828;
+  --color-pink-button: #9D5757;
+
+  --color-blue-darkest: #223558;
+
+  --color-orange-darkest: #F76C41;
+}
+
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: "ClashGrotesk", sans-serif !important;
+}
+
+body {
+  font-family: var(--font-sans);
+}
+
+/* Hide scrollbars for webkit browsers */
+.overflow-y-auto::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbars for all browsers */
+.overflow-y-auto {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
