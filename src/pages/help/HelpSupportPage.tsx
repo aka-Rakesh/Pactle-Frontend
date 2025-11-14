@@ -187,16 +187,13 @@ const HelpSupportPage: React.FC = () => {
     return () => document.removeEventListener("click", handler);
   }, []);
 
+  useEffect(() => {
+    const chatListener = () => setShowChat(true);
+    window.addEventListener("pactle:open-help-chat", chatListener);
+    return () => window.removeEventListener("pactle:open-help-chat", chatListener);
+  }, []);
+
   const openChat = () => {
-    const w = window as any;
-    if (w?.$crisp) {
-      w.$crisp.push(["do", "chat:open"]);
-      return;
-    }
-    if (w?.Intercom) {
-      w.Intercom("show");
-      return;
-    }
     setShowChat(true);
   };
 

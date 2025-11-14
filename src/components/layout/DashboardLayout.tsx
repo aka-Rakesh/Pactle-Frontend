@@ -12,13 +12,8 @@ const DashboardLayout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { features } = useClientConfig();
   const openChat = () => {
-    const w: any = typeof window !== 'undefined' ? (window as any) : null;
-    if (w?.$crisp) {
-      w.$crisp.push(["do", "chat:open"]);
-      return;
-    }
-    if (w?.Intercom) {
-      w.Intercom("show");
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('pactle:open-help-chat'));
     }
   };
 
