@@ -226,7 +226,7 @@ const CLIENT_CONFIGS: Record<string, Partial<ClientConfig>> = {
     },
 
     features: {
-      showSidebar: false,
+      showSidebar: true,
       showHeader: true,
       showSearch: true,
       showNotifications: true,
@@ -316,7 +316,7 @@ const CLIENT_CONFIGS: Record<string, Partial<ClientConfig>> = {
     },
 
     features: {
-      showSidebar: false,
+      showSidebar: true,
       showHeader: true,
       showSearch: true,
       showNotifications: true,

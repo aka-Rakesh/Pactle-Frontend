@@ -7,7 +7,7 @@ import { useClientConfig } from '../../hooks/useClientConfig';
 
 const DashboardLayout: React.FC = () => {
   const location = useLocation();
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { features } = useClientConfig();

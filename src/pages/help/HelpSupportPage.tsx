@@ -1,11 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react";
 import {
-  IconBug,
-  IconBulb,
+  IconHeadset,
+  IconFileLike,
+  IconMessageReport,
   IconChevronDown,
   IconChevronRight,
   IconMessage2,
-  IconMessageCircle2,
   IconSearch,
   IconSend,
   IconX,
@@ -215,9 +215,8 @@ const HelpSupportPage: React.FC = () => {
   const activeCat = useMemo(() => knowledgeBase.find((c) => c.key === activeCategory) || null, [activeCategory]);
 
   return (
-    <div className="p-6">
+    <div className="p-6 font-inter">
       <div className="max-w-6xl mx-auto space-y-10">
-        <h1 className="text-2xl font-semibold text-gray-dark">Help & Support</h1>
 
         <section className="bg-background-light rounded-lg border border-border-dark p-6">
           <div className="max-w-3xl mx-auto space-y-5">
@@ -227,7 +226,7 @@ const HelpSupportPage: React.FC = () => {
               <div className="relative">
                 <IconSearch className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-light" />
                 <Input
-                  variant="searchDark"
+                  variant="search"
                   placeholder="Search articles, FAQs, or past issues"
                   value={query}
                   onChange={(e) => {
@@ -270,51 +269,36 @@ const HelpSupportPage: React.FC = () => {
               )}
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
-              <div className="bg-background-dark rounded-lg p-4 border border-border-dark">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-green-darkest/15 flex items-center justify-center">
-                    <IconMessageCircle2 className="w-5 h-5 text-green-darkest" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="text-sm font-semibold text-gray-dark">Chat with support</div>
-                    <div className="text-xs text-gray-light">Get help from a real person, fast.</div>
-                  </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 justify-items-center">
+              <button
+                onClick={openChat}
+                className="flex items-center justify-between w-[256px] h-[60px] rounded-lg pl-7 pr-8 gap-2 text-white bg-[#2e4828] hover:opacity-95"
+              >
+                <div className="w-[115px] h-[60px] py-5 text-sm font-semibold leading-none text-left">
+                  Chat with support
                 </div>
-                <div className="mt-3">
-                  <Button width="full" onClick={openChat}>Chat now</Button>
-                </div>
-              </div>
+                <IconHeadset className="w-7 h-7 text-white" />
+              </button>
 
-              <div className="bg-background-dark rounded-lg p-4 border border-border-dark">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-yellow-lightest flex items-center justify-center">
-                    <IconBulb className="w-5 h-5 text-yellow-darkest" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="text-sm font-semibold text-gray-dark">Share feedback</div>
-                    <div className="text-xs text-gray-light">Tell us what to improve.</div>
-                  </div>
+              <button
+                onClick={() => setShowFeedback(true)}
+                className="flex items-center justify-between w-[256px] h-[60px] rounded-lg pl-7 pr-8 gap-2 text-white bg-[#958f7e] hover:opacity-95"
+              >
+                <div className="w-[115px] h-[60px] py-5 text-sm font-semibold leading-none text-left">
+                  Share feedback
                 </div>
-                <div className="mt-3">
-                  <Button variant="cta" width="full" onClick={() => setShowFeedback(true)}>Submit feedback</Button>
-                </div>
-              </div>
+                <IconFileLike className="w-7 h-7 text-white" />
+              </button>
 
-              <div className="bg-background-dark rounded-lg p-4 border border-border-dark">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-pink-lightest flex items-center justify-center">
-                    <IconBug className="w-5 h-5 text-pink-darkest" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="text-sm font-semibold text-gray-dark">Report a bug</div>
-                    <div className="text-xs text-gray-light">Found an issue? Let us know.</div>
-                  </div>
+              <button
+                onClick={() => setShowBug(true)}
+                className="flex items-center justify-between w-[256px] h-[60px] rounded-lg pl-7 pr-8 gap-2 text-white bg-[#492728] hover:opacity-95"
+              >
+                <div className="w-[115px] h-[60px] py-5 text-sm font-semibold leading-none text-left">
+                  Report a bug
                 </div>
-                <div className="mt-3">
-                  <Button variant="destructive" width="full" onClick={() => setShowBug(true)}>Report an issue</Button>
-                </div>
-              </div>
+                <IconMessageReport className="w-7 h-7 text-white" />
+              </button>
             </div>
           </div>
         </section>

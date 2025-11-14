@@ -5,6 +5,8 @@ import {
   IconLogout,
   IconUser,
   IconX,
+  IconHeadset,
+  IconChevronRight,
 } from "@tabler/icons-react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import logo from "/logo-white.svg";
@@ -130,7 +132,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                   case 'members':
                     return features.showMembers && canAccessPage('members');
                   case 'help':
-                    return features.showHelpSupport && canAccessPage('help_support');
+                    return false;
                   default:
                     return false;
                 }
@@ -153,7 +155,12 @@ const Sidebar: React.FC<SidebarProps> = ({
                     }}
                   >
                     <Icon className="w-4 h-4 flex-shrink-0" />
-                    {(!isActuallyCollapsed || isMobile) && <span>{item.label}</span>}
+                    {(!isActuallyCollapsed || isMobile) && (
+                      <div className="flex items-center justify-between w-full">
+                        <span>{item.label}</span>
+                        {item.id === 'overview' && <IconChevronRight className="w-4 h-4" />}
+                      </div>
+                    )}
                   </NavLink>
                 );
               })}
@@ -161,7 +168,29 @@ const Sidebar: React.FC<SidebarProps> = ({
 
         </nav>
 
-        <div className={`${isActuallyCollapsed ? "p-2" : "p-4"} bg-background-light border-t border-border-dark pb-[max(env(safe-area-inset-bottom),16px)] relative`} ref={profileRef}>
+        {features.showHelpSupport && canAccessPage('help_support') && (
+          <div className={`${isActuallyCollapsed ? "p-2" : "px-4 py-3"} bg-background-light border-t border-border-dark`}>
+            <NavLink
+              to="/dashboard/help"
+              onClick={isMobile ? onClose : undefined}
+              className={({ isActive }) => {
+                return `flex items-center ${isCollapsed ? "justify-center px-2 py-2" : "space-x-3 px-2 py-2"} rounded-md text-sm font-medium transition-colors ${
+                  isActive ? "bg-green-darkest text-white" : "text-gray-light hover:bg-hover-light"
+                }`;
+              }}
+            >
+              <IconHeadset className="w-4 h-4 flex-shrink-0" />
+              {(!isActuallyCollapsed || isMobile) && (
+                <div className="flex items-center justify-between w-full">
+                  <span>Help & Support</span>
+                  <IconChevronRight className="w-4 h-4" />
+                </div>
+              )}
+            </NavLink>
+          </div>
+        )}
+
+        <div className={`${isActuallyCollapsed ? "p-2" : "p-4"} bg-background-light pb-[max(env(safe-area-inset-bottom),16px)] relative`} ref={profileRef}>
           <div
             onClick={() => setShowPopover((prev) => !prev)}
             className={`cursor-pointer flex items-center ${isActuallyCollapsed ? "justify-center" : "space-x-3 w-full"} ${

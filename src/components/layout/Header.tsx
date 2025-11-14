@@ -46,9 +46,14 @@ const Header: React.FC<HeaderProps> = ({
   };
 
   const formatSegment = (segment: string) =>
-    segment.replace(/[-_]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+    segment === "help" 
+      ? "Help & Support" 
+      : segment.replace(/[-_]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 
-  const formatTabTitle = (tab: string) => tab.replace("-", " ");
+  const formatTabTitle = (tab: string) => 
+    tab === "help" 
+      ? "Help & Support" 
+      : tab.replace("-", " ");
 
   const handleLogout = () => {
     logout();
