@@ -5,10 +5,12 @@ import {
   IconMessageReport,
   IconChevronDown,
   IconChevronRight,
+  IconArrowNarrowRight,
   IconMessage2,
   IconSearch,
   IconSend,
   IconX,
+  IconMailOpened,
 } from "@tabler/icons-react";
 import { Input } from "../../components/ui/Input";
 import { Button } from "../../components/ui/Button";
@@ -85,11 +87,9 @@ const knowledgeBase = [
     title: "RFQs & Quotes",
     articles: [
       "Creating a new quote",
-      "Editing line items",
+      "Editing item details",
       "Submitting for approval",
       "Adding customers to quotes",
-      "Importing items from RFQ",
-      "Exporting a quote",
     ],
   },
   {
@@ -100,8 +100,6 @@ const knowledgeBase = [
       "How managers review quotes",
       "Notifications for approvals",
       "Returning a quote for revision",
-      "Approval SLAs",
-      "Tracking approval history",
     ],
   },
   {
@@ -111,9 +109,6 @@ const knowledgeBase = [
       "Connecting your ERP",
       "Sync errors and fixes",
       "What data gets synced",
-      "Mapping items and HSN codes",
-      "Syncing customers",
-      "Scheduling background syncs",
     ],
   },
   {
@@ -124,8 +119,6 @@ const knowledgeBase = [
       "Auto reminders for payment",
       "Recording manual payments",
       "Payment reports",
-      "Invoice email templates",
-      "GST on invoices",
     ],
   },
   {
@@ -135,9 +128,6 @@ const knowledgeBase = [
       "Adding new users",
       "Changing user roles",
       "Deactivating an account",
-      "Resetting passwords",
-      "Managing access levels",
-      "Audit logs overview",
     ],
   },
   {
@@ -148,8 +138,6 @@ const knowledgeBase = [
       "Approval email not received",
       "Invoice showing wrong total",
       "File upload issues",
-      "App running slow",
-      "Clearing cached data",
     ],
   },
 ];
@@ -218,17 +206,18 @@ const HelpSupportPage: React.FC = () => {
     <div className="p-6 font-inter">
       <div className="max-w-6xl mx-auto space-y-10">
 
-        <section className="bg-background-light rounded-lg border border-border-dark p-6">
-          <div className="max-w-3xl mx-auto space-y-5">
-            <p className="text-center text-gray-dark font-medium">Hello, how can we help?</p>
+        <section className="bg-background-light rounded-lg border border-border-dark" style={{ width: '1121px', height: '336px', padding: '80px 160px 84px 160px', margin: '0 auto' }}>
+          <div className="space-y-6">
+            <p className="text-center text-gray-dark font-semibold text-[20px] leading-[20px] font-inter" style={{ letterSpacing: '-0.015em' }}>Hello, how can we help?</p>
 
-            <div id="help-search-wrapper" className="relative">
+            <div id="help-search-wrapper" className="relative mx-auto" style={{ width: '801px' }}>
               <div className="relative">
                 <IconSearch className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-light" />
                 <Input
                   variant="search"
                   placeholder="Search articles, FAQs, or past issues"
                   value={query}
+                  className="h-[40px]"
                   onChange={(e) => {
                     setQuery(e.target.value);
                     setShowSuggestions(true);
@@ -269,52 +258,51 @@ const HelpSupportPage: React.FC = () => {
               )}
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 justify-items-center">
+            <div className="grid grid-cols-3 gap-[17px] pt-1 mx-auto" style={{ width: '801px' }}>
               <button
                 onClick={openChat}
-                className="flex items-center justify-between w-[256px] h-[60px] rounded-lg pl-7 pr-8 gap-2 text-white bg-[#2e4828] hover:opacity-95"
+                className="flex items-center justify-center w-full h-[60px] rounded-lg gap-3 text-white bg-[#2e4828] hover:opacity-95"
               >
-                <div className="w-[115px] h-[60px] py-5 text-sm font-semibold leading-none text-left">
+                <IconHeadset className="w-7 h-7 text-white flex-shrink-0" />
+                <span className="font-inter text-[14px] leading-[20px] font-medium" style={{ letterSpacing: '-0.03em' }}>
                   Chat with support
-                </div>
-                <IconHeadset className="w-7 h-7 text-white" />
+                </span>
               </button>
 
               <button
                 onClick={() => setShowFeedback(true)}
-                className="flex items-center justify-between w-[256px] h-[60px] rounded-lg pl-7 pr-8 gap-2 text-white bg-[#958f7e] hover:opacity-95"
+                className="flex items-center justify-center w-full h-[60px] rounded-lg gap-3 text-white bg-[#958f7e] hover:opacity-95"
               >
-                <div className="w-[115px] h-[60px] py-5 text-sm font-semibold leading-none text-left">
+                <IconFileLike className="w-7 h-7 text-white flex-shrink-0" />
+                <span className="font-inter text-[14px] leading-[20px] font-medium" style={{ letterSpacing: '-0.03em' }}>
                   Share feedback
-                </div>
-                <IconFileLike className="w-7 h-7 text-white" />
+                </span>
               </button>
 
               <button
                 onClick={() => setShowBug(true)}
-                className="flex items-center justify-between w-[256px] h-[60px] rounded-lg pl-7 pr-8 gap-2 text-white bg-[#492728] hover:opacity-95"
+                className="flex items-center justify-center w-full h-[60px] rounded-lg gap-3 text-white bg-[#492728] hover:opacity-95"
               >
-                <div className="w-[115px] h-[60px] py-5 text-sm font-semibold leading-none text-left">
+                <IconMessageReport className="w-7 h-7 text-white flex-shrink-0" />
+                <span className="font-inter text-[14px] leading-[20px] font-medium" style={{ letterSpacing: '-0.03em' }}>
                   Report a bug
-                </div>
-                <IconMessageReport className="w-7 h-7 text-white" />
+                </span>
               </button>
             </div>
           </div>
         </section>
 
-        <section className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-dark">Frequently asked questions</h2>
-            <button className="text-sm text-gray-light hover:underline">See all questions →</button>
+        <section className="space-y-4 mt-16">
+          <div className="text-center">
+            <h2 className="text-lg font-semibold text-gray-dark mb-6">Frequently asked questions</h2>
           </div>
-          <div className="space-y-2 max-w-3xl">
+          <div className="space-y-2 max-w-[632px] mx-auto">
             {sampleFaqs.map((f, idx) => {
               const open = expandedFaq === idx;
               return (
-                <div key={idx} className="border border-border-dark rounded-lg bg-background-light">
+                <div key={idx} className="border border-border-dark rounded-md bg-background-light">
                   <button
-                    className="w-full text-left px-4 py-3 flex items-center justify-between"
+                    className="w-full text-left px-5 py-5 flex items-center justify-between h-[56px]"
                     onClick={() => setExpandedFaq(open ? null : idx)}
                   >
                     <span className="text-sm font-semibold text-gray-dark">{f.q}</span>
@@ -327,31 +315,57 @@ const HelpSupportPage: React.FC = () => {
               );
             })}
           </div>
+          <div className="text-center mt-6">
+            <button className="text-sm text-gray-light hover:underline">See all questions →</button>
+          </div>
         </section>
 
-        <section className="space-y-4">
-          <h2 className="text-lg font-semibold text-gray-dark">Knowledge Base</h2>
+        <section className="space-y-8 mt-16">
+          <h2 className="text-lg font-semibold text-gray-dark text-center">Knowledge Base</h2>
           {!activeCategory ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 justify-items-center">
               {knowledgeBase.map((cat) => (
-                <div key={cat.key} className="bg-background-light rounded-lg border border-border-dark p-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                      <span className="w-6 h-6 rounded bg-background-darkest inline-flex items-center justify-center text-xs text-gray-light">{cat.title.split(" ")[0][0]}</span>
-                      <h3 className="text-sm font-semibold text-gray-dark">{cat.title}</h3>
+                <div
+                  key={cat.key}
+                  className="bg-background-light rounded-lg border border-border-dark p-6 flex flex-col justify-between"
+                  style={{ width: "360px", height: "260px" }}
+                >
+                  <div className="flex items-center gap-[10px]">
+                    <div className="w-7 h-7 border border-[#D6CEC0] rounded bg-[#ECE8DF] p-[6px] flex items-center justify-center">
+                      <IconMailOpened className="w-4 h-4 text-gray-dark" />
                     </div>
-                    <div className="text-xs text-gray-light">{cat.articles.length} articles</div>
+                    <h3 className="font-inter text-[14px] leading-[20px] font-medium text-[#3F3F46]">
+                      {cat.title}
+                    </h3>
                   </div>
-                  <ul className="text-sm text-gray-light space-y-1">
-                    {cat.articles.slice(0, 4).map((a) => (
-                      <li key={a} className="flex items-center justify-between">
-                        <span className="truncate">{a}</span>
-                        <IconChevronRight className="w-4 h-4" />
+                  <ul className="mt-4 space-y-3">
+                    {cat.articles.map((a) => (
+                      <li key={a}>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setActiveCategory(cat.key);
+                            setActiveArticle(a);
+                          }}
+                          className="w-full flex items-center justify-between text-left text-[#958F7E] font-inter text-[12px] leading-[20px] gap-3"
+                        >
+                          <span className="flex items-center gap-[10px]">
+                            <span className="text-[#958F7E]">•</span>
+                            <span className="truncate">{a}</span>
+                          </span>
+                          <IconArrowNarrowRight className="w-4 h-4 text-[#958F7E]" />
+                        </button>
                       </li>
                     ))}
                   </ul>
-                  <div className="mt-3">
-                    <Button variant="back" width="full" onClick={() => setActiveCategory(cat.key)}>View articles</Button>
+                  <div className="mt-auto pt-6">
+                    <button
+                      type="button"
+                      onClick={() => setActiveCategory(cat.key)}
+                      className="text-sm text-[12px] font-medium text-[#958F7E] underline"
+                    >
+                      10 articles
+                    </button>
                   </div>
                 </div>
               ))}

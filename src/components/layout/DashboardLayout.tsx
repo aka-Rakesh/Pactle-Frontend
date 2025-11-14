@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { IconMessage2 } from '@tabler/icons-react';
+import { IconBrandHipchat } from '@tabler/icons-react';
 import { Outlet, useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Header from './Header';
@@ -90,10 +90,10 @@ const DashboardLayout: React.FC = () => {
       {features.showHelpSupport && (
         <button
           onClick={openChat}
-          className="fixed bottom-6 right-6 z-50 w-12 h-12 rounded-full bg-green-darkest text-white shadow-lg flex items-center justify-center hover:bg-green-dark"
+          className="fixed bottom-6 right-6 z-50 w-20 h-20 rounded-[16px] bg-green-darkest text-white shadow-lg flex items-center justify-center hover:bg-green-dark"
           aria-label="Open chat"
         >
-          <IconMessage2 className="w-6 h-6" />
+          <IconBrandHipchat className="w-10 h-10" />
         </button>
       )}
     </div>
