@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   IconHeadset,
   IconFileLike,
@@ -6,15 +6,17 @@ import {
   IconChevronDown,
   IconChevronRight,
   IconArrowNarrowRight,
-  IconMessage2,
   IconSearch,
   IconSend,
   IconX,
   IconMailOpened,
+  IconCircleCheck,
+  IconCloudUpload,
 } from "@tabler/icons-react";
 import { Input } from "../../components/ui/Input";
 import { Button } from "../../components/ui/Button";
 import { TextArea } from "../../components/ui/TextArea";
+import { cn } from "../../lib/cn";
 
 const Modal: React.FC<{
   open: boolean;
@@ -40,31 +42,58 @@ const Modal: React.FC<{
   );
 };
 
-const SlideOver: React.FC<{
+type SlideOverProps = {
   open: boolean;
   title: string;
   onClose: () => void;
   children: React.ReactNode;
-}> = ({ open, title, onClose, children }) => {
+  subtitle?: string;
+  icon?: React.ReactNode;
+  panelClassName?: string;
+  headerClassName?: string;
+  bodyClassName?: string;
+};
+
+const SlideOver: React.FC<SlideOverProps> = ({
+  open,
+  title,
+  onClose,
+  children,
+  subtitle,
+  icon,
+  panelClassName,
+  headerClassName,
+  bodyClassName,
+}) => {
   if (!open) return null;
   return (
     <div className="fixed inset-0 z-[70]">
       <div className="absolute inset-0 bg-black/30" onClick={onClose} />
-      <div className="absolute inset-y-0 right-0 w-full sm:max-w-md bg-background-light shadow-2xl border-l border-border-dark flex flex-col">
-        <div className="flex items-center justify-between px-4 py-3 border-b border-border-dark bg-background-dark">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-green-darkest/15 rounded-lg flex items-center justify-center">
-              <IconMessage2 className="w-4 h-4 text-green-darkest" />
+      <div
+        className={cn(
+          "absolute inset-y-0 right-0 w-full sm:max-w-md bg-background-light shadow-2xl border-l border-border-dark flex flex-col",
+          panelClassName
+        )}
+      >
+        <div
+          className={cn(
+            "px-4 py-3 border-b border-border-dark bg-background-dark flex items-start justify-between gap-3",
+            headerClassName
+          )}
+        >
+          <div className={cn("flex items-start", icon ? "gap-3" : "gap-0")}
+          >
+            {icon && <div className="pt-0.5">{icon}</div>}
+            <div className="space-y-1">
+              <h3 className="text-sm font-semibold text-gray-dark">{title}</h3>
+              {subtitle && <p className="text-xs text-gray-light leading-relaxed">{subtitle}</p>}
             </div>
-            <h3 className="text-sm font-semibold text-gray-dark">{title}</h3>
           </div>
           <button onClick={onClose} className="p-2 rounded hover:bg-hover-light" aria-label="Close">
             <IconX className="w-5 h-5" />
           </button>
         </div>
-        <div className="flex-1 overflow-y-auto p-4 space-y-3">
-          {children}
-        </div>
+        <div className={cn("flex-1 overflow-y-auto p-4 space-y-3", bodyClassName)}>{children}</div>
       </div>
     </div>
   );
@@ -172,6 +201,9 @@ const HelpSupportPage: React.FC = () => {
       if (!target.closest("#help-search-wrapper")) {
         setShowSuggestions(false);
       }
+      if (severityRef.current && !severityRef.current.contains(target)) {
+        setShowSeverityOptions(false);
+      }
     };
     document.addEventListener("click", handler);
     return () => document.removeEventListener("click", handler);
@@ -194,8 +226,11 @@ const HelpSupportPage: React.FC = () => {
   const [feedbackText, setFeedbackText] = useState("");
 
   const [bugTitle, setBugTitle] = useState("");
-  const [bugSeverity, setBugSeverity] = useState("medium");
+  const [bugSeverity, setBugSeverity] = useState("");
   const [bugText, setBugText] = useState("");
+  const [showSeverityOptions, setShowSeverityOptions] = useState(false);
+  const severityRef = useRef<HTMLDivElement | null>(null);
+  const [showBugToast, setShowBugToast] = useState(false);
 
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [activeArticle, setActiveArticle] = useState<string | null>(null);
@@ -448,41 +483,160 @@ const HelpSupportPage: React.FC = () => {
         </div>
       </Modal>
 
-      <Modal open={showBug} title="Report a bug / issue" onClose={() => setShowBug(false)}>
-        <div className="space-y-4">
-          <Input label="Title" placeholder="Short description" value={bugTitle} onChange={(e) => setBugTitle(e.target.value)} />
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label className="block text-sm font-medium text-gray-dark mb-1">Severity</label>
-              <select
-                className="w-full px-3 py-2 border rounded-lg bg-white border-gray-300 text-sm"
-                value={bugSeverity}
-                onChange={(e) => setBugSeverity(e.target.value)}
-              >
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-                <option value="critical">Critical</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-dark mb-1">Screenshots</label>
-              <input type="file" multiple accept="image/*" className="w-full text-sm" />
-            </div>
+      <SlideOver
+        open={showBug}
+        title="Report a Bug"
+        subtitle="Tell us what’s not working — our support team will look into it right away."
+        icon={
+          <div className="w-9 h-9 rounded-md bg-[#ECE8DF] flex items-center justify-center">
+            <IconMessageReport className="w-4 h-4 text-[#492728]" />
           </div>
-          <TextArea label="What happened?" rows={6} placeholder="Steps to reproduce, expected vs actual results, environment details…" value={bugText} onChange={(e) => setBugText(e.target.value)} />
-          <div className="flex justify-end gap-2">
-            <Button variant="cta" onClick={() => setShowBug(false)}>Cancel</Button>
-            <Button variant="destructive" onClick={() => {
+        }
+        bodyClassName="space-y-6"
+        onClose={() => {
+          setShowBug(false);
+          setShowSeverityOptions(false);
+        }}
+      >
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-[#3F3F46]">Title</label>
+          <input
+            className="w-full h-11 px-3 rounded-lg border border-border-dark bg-white text-sm text-[#3F3F46] focus:outline-none focus:ring-2 focus:ring-green-light"
+            placeholder="Enter a title"
+            value={bugTitle}
+            onChange={(e) => setBugTitle(e.target.value)}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-[#3F3F46]">Description</label>
+          <textarea
+            rows={6}
+            className="w-full px-3 py-3 rounded-lg border border-border-dark bg-white text-sm text-[#3F3F46] resize-none focus:outline-none focus:ring-2 focus:ring-green-light"
+            placeholder="Enter a description"
+            value={bugText}
+            onChange={(e) => setBugText(e.target.value)}
+          />
+          <p className="text-xs text-[#958F7E]">*The more detail you provide, the faster we can fix it.</p>
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-[#3F3F46]">Severity</label>
+          <div ref={severityRef} className="relative">
+            <button
+              type="button"
+              onClick={() => setShowSeverityOptions((prev) => !prev)}
+              className="w-full h-11 px-3 pr-10 rounded-[10px] border border-border-dark bg-white text-sm shadow-[0_1px_2px_rgba(63,63,70,0.05)] flex items-center justify-between"
+            >
+              <span className={`${bugSeverity ? "text-[#3F3F46]" : "text-[#958F7E]"}`}>
+                {bugSeverity ? bugSeverity.charAt(0).toUpperCase() + bugSeverity.slice(1) : "Select severity level"}
+              </span>
+              <IconChevronDown
+                className={`w-4 h-4 text-[#958F7E] transition-transform ${showSeverityOptions ? "rotate-180" : ""}`}
+              />
+            </button>
+            {showSeverityOptions && (
+              <div className="absolute top-full left-0 mt-2 w-full rounded-[10px] border border-border-dark bg-white shadow-[0_8px_16px_rgba(63,63,70,0.08)] overflow-hidden">
+                {[
+                  { value: "low", label: "Low" },
+                  { value: "medium", label: "Medium" },
+                  { value: "high", label: "High" },
+                  { value: "critical", label: "Critical" },
+                ].map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    className={`w-full px-3 py-2 text-left text-sm transition-colors ${
+                      bugSeverity === option.value ? "bg-[#F4F2ED] text-[#3F3F46]" : "text-[#3F3F46] hover:bg-[#F4F2ED]"
+                    }`}
+                    onClick={() => {
+                      setBugSeverity(option.value);
+                      setShowSeverityOptions(false);
+                    }}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-[#3F3F46]">Attachments</label>
+          <button
+            type="button"
+            className="w-full h-40 border border-border-dark rounded-[10px] bg-white text-sm text-[#958F7E]"
+          >
+            <div className="h-full w-full rounded-[8px] border border-border-dark flex flex-col items-center justify-center gap-3 px-6">
+              <div className="w-12 h-12 rounded-[10px] bg-[#F4F2ED] flex items-center justify-center">
+                <IconCloudUpload className="w-6 h-6 text-[#767579]" />
+              </div>
+              <div className="text-center space-y-1">
+                <div className="text-[#3F3F46]">Drop file here or click to upload</div>
+                <div className="text-xs">Supported formats: PNG, JPG, JPEG</div>
+              </div>
+            </div>
+          </button>
+        </div>
+
+        <div className="flex items-center justify-between pt-2">
+          <button
+            type="button"
+            className="h-11 px-6 rounded-lg bg-[#E4DED3] text-sm text-[#3F3F46]"
+            onClick={() => {
+              setShowBug(false);
+              setShowSeverityOptions(false);
+            }}
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            className="h-11 px-6 rounded-lg bg-[#2E4828] text-white text-sm"
+            onClick={() => {
               console.log("bug.report", { title: bugTitle, severity: bugSeverity, text: bugText });
               setShowBug(false);
               setBugTitle("");
               setBugText("");
-              setBugSeverity("medium");
-            }}>Submit</Button>
+              setBugSeverity("");
+              setShowSeverityOptions(false);
+              setShowBugToast(true);
+            }}
+          >
+            Submit report
+          </button>
+        </div>
+      </SlideOver>
+
+      {showBugToast && (
+        <div className="fixed inset-0 z-[90] flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/35" onClick={() => setShowBugToast(false)} />
+          <div className="relative w-[420px] max-w-[calc(100%-32px)] shadow-[0_20px_45px_rgba(63,63,70,0.18)] rounded-xl overflow-hidden border border-border-dark bg-white">
+            <div className="flex items-center gap-3 px-6 py-4 bg-[#E6EAF4]">
+              <span className="w-7 h-7 rounded-full bg-[#E2F2E6] flex items-center justify-center">
+                <IconCircleCheck className="w-4 h-4 text-[#2E4828]" />
+              </span>
+              <h4 className="text-sm font-semibold text-[#3F3F46]">Bug report submitted!</h4>
+            </div>
+            <div className="px-6 py-5 bg-[#FBF9F3] text-sm text-[#3F3F46] space-y-4">
+              <p>
+                Thanks for the details. Our team will review and get back to you shortly. You can track your issue or
+                chat with support anytime from the floating button.
+              </p>
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  className="px-4 py-2 rounded-lg bg-[#2E4828] text-white text-sm"
+                  onClick={() => setShowBugToast(false)}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-      </Modal>
+      )}
 
       <SlideOver open={showChat} title="Chat with support" onClose={() => setShowChat(false)}>
         <div className="space-y-3">
