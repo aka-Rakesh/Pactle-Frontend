@@ -15,32 +15,7 @@ import {
 } from "@tabler/icons-react";
 import { Input } from "../../components/ui/Input";
 import { Button } from "../../components/ui/Button";
-import { TextArea } from "../../components/ui/TextArea";
 import { cn } from "../../lib/cn";
-
-const Modal: React.FC<{
-  open: boolean;
-  title: string;
-  onClose: () => void;
-  children: React.ReactNode;
-  widthClass?: string;
-}> = ({ open, title, onClose, children, widthClass = "max-w-xl" }) => {
-  if (!open) return null;
-  return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center">
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-      <div className={`relative bg-background-light rounded-lg shadow-xl w-full ${widthClass} mx-4 p-5`}>
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-base font-semibold text-gray-dark">{title}</h3>
-          <button onClick={onClose} className="p-2 rounded hover:bg-hover-light" aria-label="Close">
-            <IconX className="w-5 h-5" />
-          </button>
-        </div>
-        {children}
-      </div>
-    </div>
-  );
-};
 
 type SlideOverProps = {
   open: boolean;
@@ -201,6 +176,9 @@ const HelpSupportPage: React.FC = () => {
       if (!target.closest("#help-search-wrapper")) {
         setShowSuggestions(false);
       }
+      if (feedbackTypeRef.current && !feedbackTypeRef.current.contains(target)) {
+        setShowFeedbackTypeOptions(false);
+      }
       if (severityRef.current && !severityRef.current.contains(target)) {
         setShowSeverityOptions(false);
       }
@@ -222,8 +200,12 @@ const HelpSupportPage: React.FC = () => {
     setShowChat(true);
   };
 
-  const [feedbackTitle, setFeedbackTitle] = useState("");
+  const [feedbackType, setFeedbackType] = useState("");
   const [feedbackText, setFeedbackText] = useState("");
+  const [feedbackImpact, setFeedbackImpact] = useState("");
+  const [showFeedbackTypeOptions, setShowFeedbackTypeOptions] = useState(false);
+  const feedbackTypeRef = useRef<HTMLDivElement | null>(null);
+  const [showFeedbackToast, setShowFeedbackToast] = useState(false);
 
   const [bugTitle, setBugTitle] = useState("");
   const [bugSeverity, setBugSeverity] = useState("");
@@ -467,21 +449,141 @@ const HelpSupportPage: React.FC = () => {
 
       
 
-      <Modal open={showFeedback} title="Submit Feedback" onClose={() => setShowFeedback(false)}>
-        <div className="space-y-4">
-          <Input label="Title" placeholder="Brief summary" value={feedbackTitle} onChange={(e) => setFeedbackTitle(e.target.value)} />
-          <TextArea label="Your feedback" rows={5} placeholder="What would you like to see improved?" value={feedbackText} onChange={(e) => setFeedbackText(e.target.value)} />
-          <div className="flex justify-end gap-2">
-            <Button variant="cta" onClick={() => setShowFeedback(false)}>Cancel</Button>
-            <Button onClick={() => {
-              console.log("feedback.submit", { title: feedbackTitle, text: feedbackText });
-              setShowFeedback(false);
-              setFeedbackTitle("");
-              setFeedbackText("");
-            }}>Submit</Button>
+      <SlideOver
+        open={showFeedback}
+        title="Share Feedback"
+        subtitle="Help us make Pactle better for your team."
+        icon={
+          <div className="w-9 h-9 rounded-md bg-[#ECE8DF] flex items-center justify-center">
+            <IconFileLike className="w-4 h-4 text-[#492728]" />
+          </div>
+        }
+        bodyClassName="space-y-6 flex flex-col h-full"
+        onClose={() => {
+          setShowFeedback(false);
+          setShowFeedbackTypeOptions(false);
+        }}
+      >
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-[#3F3F46]">Type of feedback</label>
+          <div ref={feedbackTypeRef} className="relative">
+            <button
+              type="button"
+              onClick={() => setShowFeedbackTypeOptions((prev) => !prev)}
+              className="w-full h-11 px-3 pr-10 rounded-[10px] border border-border-dark bg-white text-sm shadow-[0_1px_2px_rgba(63,63,70,0.05)] flex items-center justify-between"
+            >
+              <span className={`${feedbackType ? "text-[#3F3F46]" : "text-[#958F7E]"}`}>
+                {feedbackType ? feedbackType : "Select feedback type"}
+              </span>
+              <IconChevronDown
+                className={`w-4 h-4 text-[#958F7E] transition-transform ${showFeedbackTypeOptions ? "rotate-180" : ""}`}
+              />
+            </button>
+            {showFeedbackTypeOptions && (
+              <div className="absolute top-full left-0 mt-2 w-full rounded-[10px] border border-border-dark bg-white shadow-[0_8px_16px_rgba(63,63,70,0.08)] overflow-hidden">
+                {["General feedback", "Feature request", "Bug spotted", "Other"].map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    className={`w-full px-3 py-2 text-left text-sm transition-colors ${
+                      feedbackType === option ? "bg-[#F4F2ED] text-[#3F3F46]" : "text-[#3F3F46] hover:bg-[#F4F2ED]"
+                    }`}
+                    onClick={() => {
+                      setFeedbackType(option);
+                      setShowFeedbackTypeOptions(false);
+                    }}
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
-      </Modal>
+
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-[#3F3F46]">Feedback</label>
+          <textarea
+            rows={5}
+            className="w-full px-3 py-3 rounded-lg border border-border-dark bg-white text-sm text-[#3F3F46] resize-none focus:outline-none focus:ring-2 focus:ring-green-light"
+            placeholder="Write your feedback here"
+            value={feedbackText}
+            onChange={(e) => setFeedbackText(e.target.value)}
+          />
+          <p className="text-xs text-[#958F7E]">*Be as specific as you can — it helps us understand your needs.</p>
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-[#3F3F46]">Impact Level (optional)</label>
+          <input
+            className="w-full h-11 px-3 rounded-lg border border-border-dark bg-white text-sm text-[#3F3F46] focus:outline-none focus:ring-2 focus:ring-green-light"
+            placeholder="Enter here"
+            value={feedbackImpact}
+            onChange={(e) => setFeedbackImpact(e.target.value)}
+          />
+        </div>
+
+        <div className="mt-auto pt-4 flex items-center justify-between border-t border-border-dark">
+          <button
+            type="button"
+            className="h-11 px-6 rounded-lg bg-[#E4DED3] text-sm text-[#3F3F46]"
+            onClick={() => {
+              setShowFeedback(false);
+              setShowFeedbackTypeOptions(false);
+            }}
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            className="h-11 px-6 rounded-lg bg-[#2E4828] text-white text-sm"
+            onClick={() => {
+              console.log("feedback.submit", {
+                type: feedbackType,
+                feedback: feedbackText,
+                impact: feedbackImpact,
+              });
+              setShowFeedback(false);
+              setShowFeedbackTypeOptions(false);
+              setFeedbackType("");
+              setFeedbackText("");
+              setFeedbackImpact("");
+              setShowFeedbackToast(true);
+            }}
+          >
+            Submit feedback
+          </button>
+        </div>
+      </SlideOver>
+
+      {showFeedbackToast && (
+        <div className="fixed inset-0 z-[85] flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/35" onClick={() => setShowFeedbackToast(false)} />
+          <div className="relative w-[420px] max-w-[calc(100%-32px)] shadow-[0_20px_45px_rgba(63,63,70,0.18)] rounded-xl overflow-hidden border border-border-dark bg-white">
+            <div className="flex items-center gap-3 px-6 py-4 bg-[#E6EAF4]">
+              <span className="w-7 h-7 rounded-full bg-[#E2F2E6] flex items-center justify-center">
+                <IconCircleCheck className="w-4 h-4 text-[#2E4828]" />
+              </span>
+              <h4 className="text-sm font-semibold text-[#3F3F46]">Thanks for feedback!</h4>
+            </div>
+            <div className="px-6 py-5 bg-[#FBF9F3] text-sm text-[#3F3F46] space-y-4">
+              <p>
+                We’ve received your suggestion. Our product team reviews feedback regularly to shape future updates.
+              </p>
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  className="px-4 py-2 rounded-lg bg-[#2E4828] text-white text-sm"
+                  onClick={() => setShowFeedbackToast(false)}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
 
       <SlideOver
         open={showBug}
