@@ -54,8 +54,9 @@ const HelpCategoryPage: React.FC = () => {
           <ul
             className="space-y-1"
             style={{
-              width: "1121px",
-              height: "236px",
+              width: "100%",
+              maxWidth: "1121px",
+              height: "auto",
             }}
           >
             {category.articles.map((article) => (
