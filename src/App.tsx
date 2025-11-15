@@ -36,6 +36,7 @@ const WelcomePage = lazy(() => import("./pages/WelcomePage"));
 const MembersPage = lazy(() => import("./pages/member/MembersPage"));
 const ProfilePage = lazy(() => import("./pages/profile/ProfilePage"));
 const HelpSupportPage = lazy(() => import("./pages/help/HelpSupportPage"));
+const HelpCategoryPage = lazy(() => import("./pages/help/HelpCategoryPage"));
 
 const App: React.FC = () => {
   const { initializeAuth } = useAuthStore();
@@ -177,6 +178,16 @@ const App: React.FC = () => {
                 element={
                   <PermissionRoute pageKey="help_support">
                     <HelpSupportPage />
+                  </PermissionRoute>
+                }
+              />
+            )}
+            {features.showHelpSupport && (
+              <Route
+                path="help/category/:categoryKey"
+                element={
+                  <PermissionRoute pageKey="help_support">
+                    <HelpCategoryPage />
                   </PermissionRoute>
                 }
               />

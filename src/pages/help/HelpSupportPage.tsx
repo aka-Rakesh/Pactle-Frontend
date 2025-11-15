@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   IconHeadset,
   IconFileLike,
@@ -16,6 +17,7 @@ import {
 import { Input } from "../../components/ui/Input";
 import { Button } from "../../components/ui/Button";
 import { cn } from "../../lib/cn";
+import { helpCategories } from "./helpData";
 
 type SlideOverProps = {
   open: boolean;
@@ -85,67 +87,6 @@ const sampleFaqs = [
   { q: "How do I add new team members?", a: "Go to Members → Invite member. Assign their role and permissions, and send the invite." },
 ];
 
-const knowledgeBase = [
-  {
-    key: "rfq",
-    title: "RFQs & Quotes",
-    articles: [
-      "Creating a new quote",
-      "Editing item details",
-      "Submitting for approval",
-      "Adding customers to quotes",
-    ],
-  },
-  {
-    key: "approvals",
-    title: "Approvals",
-    articles: [
-      "Setting up approval levels",
-      "How managers review quotes",
-      "Notifications for approvals",
-      "Returning a quote for revision",
-    ],
-  },
-  {
-    key: "erp",
-    title: "ERP Integration",
-    articles: [
-      "Connecting your ERP",
-      "Sync errors and fixes",
-      "What data gets synced",
-    ],
-  },
-  {
-    key: "invoices",
-    title: "Invoices & Payments",
-    articles: [
-      "Creating invoices",
-      "Auto reminders for payment",
-      "Recording manual payments",
-      "Payment reports",
-    ],
-  },
-  {
-    key: "users",
-    title: "User Management",
-    articles: [
-      "Adding new users",
-      "Changing user roles",
-      "Deactivating an account",
-    ],
-  },
-  {
-    key: "troubleshooting",
-    title: "Troubleshooting",
-    articles: [
-      "Quote not syncing to ERP",
-      "Approval email not received",
-      "Invoice showing wrong total",
-      "File upload issues",
-    ],
-  },
-];
-
 const HelpSupportPage: React.FC = () => {
   const [query, setQuery] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -154,12 +95,13 @@ const HelpSupportPage: React.FC = () => {
   const [showFeedback, setShowFeedback] = useState(false);
   const [showBug, setShowBug] = useState(false);
   const [showChat, setShowChat] = useState(false);
+  const navigate = useNavigate();
 
   const groupedResults = useMemo(() => {
     if (!query.trim()) return [] as Array<{ group: string; items: string[] }>;
     const q = query.toLowerCase();
     const results: Array<{ group: string; items: string[] }> = [];
-    for (const cat of knowledgeBase) {
+    for (const cat of helpCategories) {
       const items = cat.articles.filter((a) => a.toLowerCase().includes(q));
       if (items.length) results.push({ group: cat.title, items });
     }
@@ -210,11 +152,6 @@ const HelpSupportPage: React.FC = () => {
   const [showSeverityOptions, setShowSeverityOptions] = useState(false);
   const severityRef = useRef<HTMLDivElement | null>(null);
   const [showBugToast, setShowBugToast] = useState(false);
-
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  const [activeArticle, setActiveArticle] = useState<string | null>(null);
-
-  const activeCat = useMemo(() => knowledgeBase.find((c) => c.key === activeCategory) || null, [activeCategory]);
 
   return (
     <div className="p-6 font-inter">
@@ -336,111 +273,50 @@ const HelpSupportPage: React.FC = () => {
 
         <section className="space-y-8 mt-16">
           <h2 className="text-lg font-semibold text-gray-dark text-center">Knowledge Base</h2>
-          {!activeCategory ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 justify-items-center">
-              {knowledgeBase.map((cat) => (
-                <div
-                  key={cat.key}
-                  className="bg-background-light rounded-lg border border-border-dark p-6 flex flex-col justify-between"
-                  style={{ width: "360px", height: "260px" }}
-                >
-                  <div className="flex items-center gap-[10px]">
-                    <div className="w-7 h-7 border border-[#D6CEC0] rounded bg-[#ECE8DF] p-[6px] flex items-center justify-center">
-                      <IconMailOpened className="w-4 h-4 text-gray-dark" />
-                    </div>
-                    <h3 className="font-inter text-[14px] leading-[20px] font-medium text-[#3F3F46]">
-                      {cat.title}
-                    </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 justify-items-center">
+            {helpCategories.map((cat) => (
+              <div
+                key={cat.key}
+                className="bg-background-light rounded-lg border border-border-dark p-6 flex flex-col justify-between"
+                style={{ width: "360px", height: "260px" }}
+              >
+                <div className="flex items-center gap-[10px]">
+                  <div className="w-7 h-7 border border-[#D6CEC0] rounded bg-[#ECE8DF] p-[6px] flex items-center justify-center">
+                    <IconMailOpened className="w-4 h-4 text-gray-dark" />
                   </div>
-                  <ul className="mt-4 space-y-3">
-                    {cat.articles.map((a) => (
-                      <li key={a}>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setActiveCategory(cat.key);
-                            setActiveArticle(a);
-                          }}
-                          className="w-full flex items-center justify-between text-left text-[#958F7E] font-inter text-[12px] leading-[20px] gap-3"
-                        >
-                          <span className="flex items-center gap-[10px]">
-                            <span className="text-[#958F7E]">•</span>
-                            <span className="truncate">{a}</span>
-                          </span>
-                          <IconArrowNarrowRight className="w-4 h-4 text-[#958F7E]" />
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                  <div className="mt-auto pt-6">
-                    <button
-                      type="button"
-                      onClick={() => setActiveCategory(cat.key)}
-                      className="text-sm text-[12px] font-medium text-[#958F7E] underline"
-                    >
-                      10 articles
-                    </button>
-                  </div>
+                  <h3 className="font-inter text-[14px] leading-[20px] font-medium text-[#3F3F46]">
+                    {cat.title}
+                  </h3>
                 </div>
-              ))}
-            </div>
-          ) : !activeArticle ? (
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <button className="text-sm text-gray-light hover:underline" onClick={() => setActiveCategory(null)}>
-                  ← Back to categories
-                </button>
-                <span className="text-sm text-gray-light">/</span>
-                <span className="text-sm text-gray-dark font-medium">{activeCat?.title}</span>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                {activeCat?.articles.map((a) => (
-                  <div key={a} className="bg-background-light rounded-lg border border-border-dark p-4 flex items-center justify-between">
-                    <span className="text-sm text-gray-dark truncate pr-3">{a}</span>
-                    <Button size="sm" onClick={() => setActiveArticle(a)}>Open</Button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <button className="text-sm text-gray-light hover:underline" onClick={() => setActiveArticle(null)}>
-                  ← Back to {activeCat?.title}
-                </button>
-              </div>
-              <article className="bg-background-light rounded-lg border border-border-dark p-5">
-                <h3 className="text-lg font-semibold text-gray-dark mb-2">{activeArticle}</h3>
-                <div className="prose prose-sm max-w-none text-gray-dark">
-                  <p>
-                    This is a placeholder article. Connect this view to your help database to render real content. Include screenshots, step-by-step instructions, and relevant links.
-                  </p>
-                  <ol className="list-decimal pl-6">
-                    <li>Go to the relevant page in the dashboard.</li>
-                    <li>Follow the on-screen steps as outlined.</li>
-                    <li>Verify the result and retry if needed.</li>
-                  </ol>
-                </div>
-                <div className="pt-6 mt-6 border-t border-border-dark flex items-center justify-between">
-                  <div className="text-sm text-gray-dark">Was this helpful?</div>
-                  <div className="flex gap-2">
-                    <Button size="sm" variant="cta">Yes</Button>
-                    <Button size="sm" variant="back">No</Button>
-                  </div>
-                </div>
-              </article>
-              <div>
-                <h4 className="text-sm font-semibold text-gray-dark mb-2">Related articles</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-                  {(activeCat?.articles || []).filter((a) => a !== activeArticle).slice(0, 3).map((a) => (
-                    <button key={a} className="bg-background-light rounded-lg border border-border-dark p-3 text-left hover:bg-background-dark" onClick={() => setActiveArticle(a)}>
-                      <div className="text-sm text-gray-dark truncate">{a}</div>
-                    </button>
+                <ul className="mt-4 space-y-3">
+                  {cat.articles.slice(0, 4).map((a) => (
+                    <li key={a}>
+                      <button
+                        type="button"
+                        className="w-full flex items-center justify-between text-left text-[#958F7E] font-inter text-[12px] leading-[20px] gap-3"
+                        onClick={() => navigate(`/dashboard/help/category/${cat.key}`)}
+                      >
+                        <span className="flex items-center gap-[10px]">
+                          <span className="text-[#958F7E]">•</span>
+                          <span className="truncate">{a}</span>
+                        </span>
+                        <IconArrowNarrowRight className="w-4 h-4 text-[#958F7E]" />
+                      </button>
+                    </li>
                   ))}
+                </ul>
+                <div className="mt-auto pt-6">
+                  <button
+                    type="button"
+                    onClick={() => navigate(`/dashboard/help/category/${cat.key}`)}
+                    className="text-sm text-[12px] font-medium text-[#958F7E] underline"
+                  >
+                    10 articles
+                  </button>
                 </div>
               </div>
-            </div>
-          )}
+            ))}
+          </div>
         </section>
       </div>
 
