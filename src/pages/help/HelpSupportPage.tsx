@@ -102,8 +102,10 @@ const HelpSupportPage: React.FC = () => {
     const q = query.toLowerCase();
     const results: Array<{ group: string; items: string[] }> = [];
     for (const cat of helpCategories) {
-      const items = cat.articles.filter((a) => a.toLowerCase().includes(q));
-      if (items.length) results.push({ group: cat.title, items });
+      const matches = cat.articles
+        .map((article) => article.title)
+        .filter((title) => title.toLowerCase().includes(q));
+      if (matches.length) results.push({ group: cat.title, items: matches });
     }
     const faqMatches = sampleFaqs
       .filter((f) => f.q.toLowerCase().includes(q))
@@ -289,16 +291,18 @@ const HelpSupportPage: React.FC = () => {
                   </h3>
                 </div>
                 <ul className="mt-4 space-y-3">
-                  {cat.articles.slice(0, 4).map((a) => (
-                    <li key={a}>
+                  {cat.articles.slice(0, 4).map((article) => (
+                    <li key={article.slug}>
                       <button
                         type="button"
                         className="w-full flex items-center justify-between text-left text-[#958F7E] font-inter text-[12px] leading-[20px] gap-3"
-                        onClick={() => navigate(`/dashboard/help/category/${cat.key}`)}
+                        onClick={() =>
+                          navigate(`/dashboard/help/category/${cat.key}/article/${article.slug}`)
+                        }
                       >
                         <span className="flex items-center gap-[10px]">
                           <span className="text-[#958F7E]">•</span>
-                          <span className="truncate">{a}</span>
+                          <span className="truncate">{article.title}</span>
                         </span>
                         <IconArrowNarrowRight className="w-4 h-4 text-[#958F7E]" />
                       </button>

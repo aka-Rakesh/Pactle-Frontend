@@ -36,7 +36,10 @@ const HelpCategoryPage: React.FC = () => {
 
   return (
     <div className="p-6 font-inter">
-        <section className="bg-[#F6F4EF] border border-border-dark rounded-2xl p-10 space-y-6 shadow-sm">
+        <section
+          className="bg-[#F6F4EF] border border-border-dark rounded-2xl p-10 space-y-6 shadow-sm"
+          style={{ width: "1121px" }}
+        >
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-[10px]">
               <div className="w-[28px] h-[28px] rounded bg-[#ECE8DF] border border-[#D6CEC0] p-[6px] flex items-center justify-center">
@@ -60,17 +63,17 @@ const HelpCategoryPage: React.FC = () => {
             }}
           >
             {category.articles.map((article) => (
-              <li key={article}>
+              <li key={article.slug}>
                 <button
                   type="button"
                   className="w-full flex items-center justify-between gap-[10px] text-left rounded-lg border border-transparent hover:border-border-dark hover:bg-white transition-colors text-[12px] leading-[20px] text-[#958F7E] font-normal"
-                  onClick={() => {
-                    console.log("help.article.open", { category: category.key, article });
-                  }}
+                  onClick={() =>
+                    navigate(`/dashboard/help/category/${category.key}/article/${article.slug}`)
+                  }
                 >
                   <span className="flex items-center gap-[10px]">
                     <span className="text-[#958F7E]">•</span>
-                    <span className="truncate">{article}</span>
+                    <span className="truncate">{article.title}</span>
                   </span>
                   <IconArrowNarrowRight className="w-4 h-4 text-[#958F7E] flex-shrink-0" />
                 </button>
